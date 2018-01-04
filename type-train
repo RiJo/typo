@@ -20,6 +20,7 @@ main() {
 
     echo "$TRAIN_TEXT"
 
+    local START_TIME=$(date +%s%N)
     local MISTAKES=0
     while IFS= read -n 1 -u 10 CURRENT_CHAR; do
         [ "$CURRENT_CHAR" == "" ] && break # EOF
@@ -29,7 +30,10 @@ main() {
         # echo "FOO=$FOO, MISTAKES=$MISTAKES"
         printf "-"
     done 10<<< "$TRAIN_TEXT"
+    local END_TIME=$(date +%s%N)
+    local ELAPSED_TIME=$(((END_TIME - START_TIME)/1000000))
     echo ""
+    echo "Elapsed: $ELAPSED_TIME ms"
     echo "Mistakes: $MISTAKES"
 }
 
