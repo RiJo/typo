@@ -1,19 +1,10 @@
 #!/bin/bash
 
-# TODO: add to repo (github?)
-# TODO: initialize .ticks
-# TODO: store statistics (best/worst for each template file + global statistics [most missed letters, etc])
-# TODO: measure time
-# TODO: bugfix - whitespaces are currently all same input (can use return instead of space etc.)
-# TODO: implement randomize functionality: give string of chars + eventual length"
-# TODO: read from stdin
-
-
 expect_char() {
     local EXPECTED_CHAR="$1"
     local INVALID_INPUT_COUNT=0
     while [ 1 ]; do
-        read -s -r -n 1 ENTERED_CHAR
+        IFS= read -s -r -n 1 ENTERED_CHAR
         [ "$ENTERED_CHAR" == "$EXPECTED_CHAR" ] && break
         local INVALID_INPUT_COUNT=$((INVALID_INPUT_COUNT+1))
     done
@@ -27,11 +18,11 @@ main() {
         local TRAIN_TEXT="$(< /dev/stdin)" # stdin
     fi
 
-    # echo "----------------------------"
     echo "$TRAIN_TEXT"
 
     local MISTAKES=0
-    while read -n 1 -u 10 CURRENT_CHAR; do
+    while IFS= read -n 1 -u 10 CURRENT_CHAR; do
+        [ "$CURRENT_CHAR" == "" ] && break # EOF
         # echo "CURRENT_CHAR=$CURRENT_CHAR"
         expect_char "$CURRENT_CHAR"
         local MISTAKES=$((MISTAKES+$?))
