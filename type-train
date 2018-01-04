@@ -1,5 +1,26 @@
 #!/bin/bash
 
+readonly COLOR_BLACK="\e[0;30m"
+readonly COLOR_BLUE="\e[0;34m"
+readonly COLOR_GREEN="\e[0;32m"
+readonly COLOR_CYAN="\e[0;36m"
+readonly COLOR_RED="\e[0;31m"
+readonly COLOR_PURPLE="\e[0;35m"
+readonly COLOR_BROWN="\e[0;33m"
+readonly COLOR_LIGHTGRAY="\e[0;37m"
+readonly COLOR_DARKGRAY="\e[1;30m"
+readonly COLOR_LIGHTBLUE="\e[1;34m"
+readonly COLOR_LIGHTGREEN="\e[1;32m"
+readonly COLOR_LIGHTCYAN="\e[1;36m"
+readonly COLOR_LIGHTRED="\e[1;31m"
+readonly COLOR_LIGHTPURPLE="\e[1;35m"
+readonly COLOR_YELLOW="\e[1;33m"
+readonly COLOR_WHITE="\e[1;37m"
+readonly COLOR_RESET="\e[0m"
+
+readonly COLOR_TYPED_TEXT="$COLOR_DARKGRAY"
+readonly COLOR_NEW_TEXT="$COLOR_WHITE"
+
 expect_char() {
     local EXPECTED_CHAR="$1"
     local INVALID_INPUT_COUNT=0
@@ -18,23 +39,26 @@ main() {
         local TRAIN_TEXT="$(< /dev/stdin)" # stdin
     fi
 
-    echo "$TRAIN_TEXT"
+    # echo colorized text and move cursor to beginning
+    printf "${COLOR_NEW_TEXT}${TRAIN_TEXT}${COLOR_RESET}"
+    for i in $(seq 1 ${#TRAIN_TEXT}); do printf '\b'; done
 
+    # read input from user and print correct characters in other color
+    printf "${COLOR_TYPED_TEXT}"
     local START_TIME=$(date +%s%N)
     local MISTAKES=0
     while IFS= read -n 1 -u 10 CURRENT_CHAR; do
-        [ "$CURRENT_CHAR" == "" ] && break # EOF
-        # echo "CURRENT_CHAR=$CURRENT_CHAR"
+        [ "$CURRENT_CHAR" == "" ] && break # eof
         expect_char "$CURRENT_CHAR"
+        printf "${CURRENT_CHAR}"
         local MISTAKES=$((MISTAKES+$?))
-        # echo "FOO=$FOO, MISTAKES=$MISTAKES"
-        printf "-"
     done 10<<< "$TRAIN_TEXT"
     local END_TIME=$(date +%s%N)
     local ELAPSED_TIME=$(((END_TIME - START_TIME)/1000000))
-    echo ""
-    echo "Elapsed: $ELAPSED_TIME ms"
-    echo "Mistakes: $MISTAKES"
+
+    printf "${COLOR_RESET}\n\n"
+    printf "Elapsed: ${COLOR_WHITE}${ELAPSED_TIME} ms${COLOR_RESET}\n"
+    printf "Mistakes: ${COLOR_WHITE}${MISTAKES}${COLOR_RESET}\n"
 }
 
 main "$@"
