@@ -70,8 +70,8 @@ main() {
         local CURRENT_CHAR="${TRAIN_TEXT:$i:1}"
         [ "$CURRENT_CHAR" == "" ] && break # eof
         expect_char "$CURRENT_CHAR"
-        printf "${CURRENT_CHAR}"
         local MISTAKES=$((MISTAKES+$?))
+        printf "${CURRENT_CHAR}"
     done
     local END_TIME=$(date +%s%N)
     local ELAPSED_TIME=$(((END_TIME - START_TIME)/1000000))
