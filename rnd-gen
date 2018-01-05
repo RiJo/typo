@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Helper script which generates training strings with randoms
+# characters based on its parameters.
+#
+
+main() {
+    if [ ${#@} -lt 2 ]; then
+        printf "usage: $(basename "$0") <target string length> <target string characters>\n"
+        return 1
+    fi
+    local LENGTH="$1"
+    local CHARS="${@:2}"
+
+    for OFFSET in $(seq 1 $LENGTH); do
+        local RND_OFFSET="$(( (RANDOM % ${#CHARS}) ))"
+        printf "${CHARS:$RND_OFFSET:1}"
+    done
+    printf '\n'
+}
+
+main "$@"
+exit $?
+
