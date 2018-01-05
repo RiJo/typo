@@ -35,6 +35,7 @@ expect_char() {
     while [ 1 ]; do
         IFS= read -s -r -n 1 ENTERED_CHAR </dev/tty
         [ "$ENTERED_CHAR" == "$EXPECTED_CHAR" ] && break
+        [ "$ENTERED_CHAR" == "" ] && [ "$EXPECTED_CHAR" == $'\n' ] && break # newline
         local INVALID_INPUT_COUNT=$((INVALID_INPUT_COUNT+1))
     done
     return $INVALID_INPUT_COUNT
@@ -60,8 +61,13 @@ main() {
     fi
 
     # echo colorized text and move cursor to beginning
+    IFS=$'\n' TEXT_LINES=($TRAIN_TEXT)
+    local TEXT_LINE_COUNT=${#TEXT_LINES[@]}
+    local LAST_LINE_WIDTH=${#TEXT_LINES[$((TEXT_LINE_COUNT-1))]}
     printf "${COLOR_NEW_TEXT}${TRAIN_TEXT}${COLOR_RESET}"
-    for i in $(seq 1 ${#TRAIN_TEXT}); do printf '\b'; done
+    for i in $(seq 1 $LAST_LINE_WIDTH); do printf "\b"; done # move X chars left
+    [ $TEXT_LINE_COUNT -gt 1 ] && printf "\033[$((TEXT_LINE_COUNT-1))A" # move X lines up
+
     # read input from user and print correct characters in other color
     printf "${COLOR_TYPED_TEXT}"
     local START_TIME=$(date +%s%N)
