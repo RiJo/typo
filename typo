@@ -75,9 +75,11 @@ main() {
     done
     local END_TIME=$(date +%s%N)
     local ELAPSED_TIME=$(((END_TIME - START_TIME)/1000000))
+    local CHARS_PER_SECOND="$((${#TRAIN_TEXT} / (${ELAPSED_TIME}/1000)))"
 
     printf "${COLOR_RESET}\n\n"
     printf "Elapsed: ${COLOR_WHITE}${ELAPSED_TIME} ms${COLOR_RESET}\n"
+    printf "Chars/second: ${COLOR_WHITE}${CHARS_PER_SECOND}${COLOR_RESET}\n"
     printf "Mistakes: ${COLOR_WHITE}${MISTAKES}${COLOR_RESET}\n"
 }
 
