@@ -21,6 +21,14 @@ readonly COLOR_RESET="\e[0m"
 readonly COLOR_TYPED_TEXT="$COLOR_DARKGRAY"
 readonly COLOR_NEW_TEXT="$COLOR_WHITE"
 
+print_usage() {
+    printf "usage: $(basename "$0") [-f <filename>] [-h] [<train data>]\n\n"
+    printf "    -f <filename>     use contents of given filename as train data\n"
+    printf "    -h                print this help and exit\n"
+    printf "\n"
+    printf "    note: stdin is used for train data if no arguments are given.\n"
+}
+
 expect_char() {
     local EXPECTED_CHAR="$1"
     local INVALID_INPUT_COUNT=0
@@ -34,12 +42,19 @@ expect_char() {
 
 main() {
     if [ ${#@} -gt 0 ]; then
-        if [ "$1" == "-f" ]; then
-            [ ! -f "$2" ] && echo "file not found: $2" 1>&2 && return 1
-            local TRAIN_TEXT="$(< "$2")"
-        else
-            local TRAIN_TEXT="$@"
-        fi
+        case "$1" in
+            -f)
+                [ ! -f "$2" ] && echo "file not found: $2" 1>&2 && return 1
+                local TRAIN_TEXT="$(< "$2")"
+                ;;
+            -h)
+                print_usage
+                return 0
+                ;;
+            *)
+                local TRAIN_TEXT="$@"
+                ;;
+        esac
     else
         local TRAIN_TEXT="$(< /dev/stdin)" # stdin
     fi
