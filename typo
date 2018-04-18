@@ -60,6 +60,9 @@ main() {
         local TRAIN_TEXT="$(< /dev/stdin)" # stdin
     fi
 
+    # Prevent crashes due to empty string
+    [ -z "$TRAIN_TEXT" ] && return 0 
+
     # echo colorized text and move cursor to beginning
     IFS=$'\n' TEXT_LINES=($TRAIN_TEXT)
     local TEXT_LINE_COUNT=${#TEXT_LINES[@]}
